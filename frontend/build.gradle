@@ -1,0 +1,10 @@
+apply plugin: 'application'
+
+mainClassName = "frontend.FrontEndApplication"
+
+dependencies {
+    compile project(':core'), project(':client')
+    compile 'io.dropwizard:dropwizard-core:0.7.1'
+
+    testCompile 'junit:junit:4.12'
+}

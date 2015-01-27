@@ -1,5 +1,27 @@
 allprojects {
+    // this is just to check if stuff is working
     task hello << { task ->
         println "I'm $task.project.name"       
     }
+
+}
+
+subprojects {
+    apply plugin: 'java'
+
+	repositories {
+		jcenter()
+    }
+}
+
+task explodedDist << {
+	File explodedDist = mkdir("$buildDir/allJars")
+	subprojects.each { project ->
+		project.tasks.withType(Jar).each {archiveTask ->
+			copy {
+				from archiveTask.archivePath
+				into explodedDist
+			}
+		}
+	}
 }
