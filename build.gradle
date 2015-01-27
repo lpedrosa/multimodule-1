@@ -1,27 +1,54 @@
-allprojects {
-    // this is just to check if stuff is working
-    task hello << { task ->
-        println "I'm $task.project.name"       
-    }
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.0.1"
+  }
+}
 
+allprojects {
 }
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.artifactory'
 
-	repositories {
-		jcenter()
+    repositories {
+        jcenter()
+    }
+    publishing {
+        publications {
+            main(MavenPublication) {
+                from components.java
+            }
+        }
     }
 }
 
-task explodedDist << {
-	File explodedDist = mkdir("$buildDir/allJars")
-	subprojects.each { project ->
-		project.tasks.withType(Jar).each {archiveTask ->
-			copy {
-				from archiveTask.archivePath
-				into explodedDist
-			}
-		}
-	}
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'libs-release-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+            
+        }
+        defaults {
+            publications 'main'
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'libs-release'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+            
+        }
+    }
 }
+

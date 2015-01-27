@@ -1,4 +1,9 @@
+group = 'com.nexmo'
+version = '1.0'
+
 dependencies {
     compile 'org.apache.commons:commons-lang3:3.3.2'
     testCompile 'junit:junit:4.12'
 }
+
+
